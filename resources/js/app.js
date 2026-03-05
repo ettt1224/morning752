@@ -8,7 +8,12 @@ import router from './router';
 
 
 window.axios = axios;
-window.axios.defaults.baseURL = 'http://127.0.0.1:8000';
+
+// 移除硬編碼的 localhost，讓它在雲端自動對應正確的網址
+if (import.meta.env.VITE_API_BASE_URL) {
+    window.axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
+}
+
 
 const app = createApp(App);
 app.use(router);
