@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>點餐系統</title>
-    @vite(['resources/css/752.css', 'resources/js/app.js'])
+    @vite(['resources/css/752.css', 'resources/js/App.js'])
 </head>
 <body>
     <div id="app"></div>

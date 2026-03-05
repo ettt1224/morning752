@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 // 引入你的兩個頁面
 import Customer from './Customer.vue';
 import Kitchen from './Kitchen.vue';
-import Admin from './Admin.vue'; // 引入新頁面
+import Admin from './Admin.vue'; // 更新為 PascalCase 檔案名稱
 const routes = [
     {
         path: '/', 

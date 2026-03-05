@@ -1,0 +1,16 @@
+node_modules
+vendor
+.git
+.env
+storage/*.key
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+bootstrap/cache/*
+public/build
+public/storage
+.phpunit.result.cache
+Dockerfile
+.dockerignore
+docker
