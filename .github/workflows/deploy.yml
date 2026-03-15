@@ -1,0 +1,32 @@
+name: Deploy to GCP
+
+# 設定觸發條件：當 main 分支有新的 push 時觸發
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.GCP_HOST }}
+          username: ${{ secrets.GCP_USERNAME }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
+          # 以下是登入 GCP 後要執行的腳本
+          script: |
+            # 1. 進入你的專案資料夾 (請替換成你實際的 GCP 存放路徑)
+            cd /home/ettt1224/morning752
+            
+            # 2. 從 GitHub 拉取最新程式碼
+            git pull origin main
+            
+            # 3. 重新建置並啟動 Docker 容器 (-d 背景執行, --build 強制重新打包 image)
+            docker-compose up -d --build
+            
+            # 4. (可選) 清理懸空的 Docker image，避免 GCP 硬碟被塞爆
+            docker image prune -f
