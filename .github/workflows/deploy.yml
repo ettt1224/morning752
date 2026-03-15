@@ -19,14 +19,17 @@ jobs:
           key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           # 以下是登入 GCP 後要執行的腳本
           script: |
-            # 1. 進入你的專案資料夾 (請替換成你實際的 GCP 存放路徑)
+            # 1. 進入你的專案資料夾
             cd /home/ettt1224/morning752
             
-            # 2. 從 GitHub 拉取最新程式碼
+            # 2. 解決 Git dubious ownership 權限問題
+            git config --global --add safe.directory /home/ettt1224/morning752
+            
+            # 3. 從 GitHub 拉取最新程式碼
             git pull origin main
             
-            # 3. 重新建置並啟動 Docker 容器 (-d 背景執行, --build 強制重新打包 image)
-            docker-compose up -d --build
+            # 4. 使用 sudo 和新版 docker compose 指令重新佈署
+            sudo docker compose up -d --build
             
-            # 4. (可選) 清理懸空的 Docker image，避免 GCP 硬碟被塞爆
-            docker image prune -f
+            # 5. 清理舊的 Docker image
+            sudo docker image prune -f
