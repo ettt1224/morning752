@@ -18,7 +18,8 @@ RUN apk add --no-cache \
     libzip-dev \
     zip \
     unzip \
-    git
+    git \
+    sqlite
 
 RUN docker-php-ext-install pdo_mysql intl zip bcmath
 
@@ -32,17 +33,26 @@ COPY . .
 # 從前端階段複製編譯好的資源
 COPY --from=frontend-builder /app/public/build ./public/build
 
-# 安裝 PHP 依賴
+# 安裝 PHP 依賴 (排除開發套件)
 RUN composer install --no-dev --optimize-autoloader
 
-# 設定權限
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# --- 權限與 SQLite 處理 ---
+# 確保資料庫目錄存在並可寫入
+RUN mkdir -p /var/www/html/database && \
+    touch /var/www/html/database/database.sqlite && \
+    chown -R www-data:www-data /var/www/html/storage \
+    /var/www/html/bootstrap/cache \
+    /var/www/html/database
 
 # 複製 Nginx 設定
-COPY docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY ./docker/nginx.conf /etc/nginx/http.d/default.conf
 
-# 暴露 8080 埠 (Cloud Run 預設)
+# 暴露 8080 埠
 EXPOSE 8080
 
-# 啟動腳本
-CMD php-fpm -D && nginx -g "daemon off;"
+# 啟動腳本：執行遷移、快取優化，最後啟動服務
+CMD php artisan migrate --force && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php-fpm -D && nginx -g "daemon off;"

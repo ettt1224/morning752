@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: morning752-app:latest
+    container_name: morning752_container
+    ports:
+      - "8080:8080"
+    volumes:
+      # 為了資料持久化，建議掛載單個 SQLite 檔案。
+      # 請確保在啟動前執行：touch database/database.sqlite
+      - ./database/database.sqlite:/var/www/html/database/database.sqlite
+    environment:
+      - APP_NAME=Morning752
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=http://localhost:8080
+      - APP_KEY=base64:mGkP5r4TlKzlHR/OKkYaDS9pgkznUOkeKYHG+uAza+o=
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/database/database.sqlite
+      - SESSION_DRIVER=file
+      - CACHE_STORE=file
+      - QUEUE_CONNECTION=sync
+    restart: unless-stopped
